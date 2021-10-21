@@ -21,3 +21,5 @@ Propuesta seleccionada (#1): Survivor
 - Person (option2): thttps://www.cgtrader.com/free-3d-models/character/woman/character-0283e57e-7284-40f4-8d75-5646b45b4bf6
 - Person (option3): https://www.cgtrader.com/free-3d-models/character/man/person-human-man
 - Plane : https://www.turbosquid.com/3d-models/plane-render-3d-1192348
+- Backpack : https://www.cgtrader.com/items/2124387/download-page
+- FishingRod : https://free3d.com/es/modelo-3d/fishing-rod-92027.html
