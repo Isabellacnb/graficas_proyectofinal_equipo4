@@ -54,6 +54,15 @@ let objPerson = {
   mtl: "./models/person/person2.mtl",
 };
 
+let objfRod = {
+  obj:"./models/FishingRod/fishingRod.obj",
+  mtl:"./models/FishingRod/fishingRod.mtl"
+};
+let objbackpack = {
+  obj:"./models/backpack/Backpack.obj",
+  mtl:"./models/backpack/Backpack.mtl"
+};
+
 function main() {
   const canvas = document.getElementById("webglcanvas");
 
@@ -217,6 +226,9 @@ function createScene(canvas) {
   loadObjMtl(objLifeboat, objectList, -130, 0, -30, 0.5, 0.5, 0.5);
   loadObjMtl(objPlane, objectList, 140, 0, -30, 0.1, 0.1, 0.1);
   loadObjMtl(objPerson, objectList, 28, 0, -30, 1, 1, 1);
+  loadObjMtl(objfRod,objectList,10, -30, 130, 1, 1, 1);
+  loadObjMtl(objbackpack,objectList,10, -0, 130, .2, .2, .2);
+  
 
   scene.add(root);
 }
