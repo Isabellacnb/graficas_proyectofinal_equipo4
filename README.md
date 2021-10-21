@@ -14,10 +14,10 @@ Propuesta seleccionada (#1): Survivor
 3D Models: 
 - Island: https://www.cgtrader.com/free-3d-models/exterior/landscape/palm-baf6bfd7-1b9b-4def-b103-c9be28aaac43
 - Fish: https://www.cgtrader.com/free-3d-models/animals/fish/low-poly-fish-b981402c-4bac-491b-a4d8-6bc91b8e08b0
-- Campfire: https://www.cgtrader.com/free-3d-models/exterior/landscape/campfire-03629b01-7d0f-45fc-8466-ff748e13732e
+- Campfire: https://www.turbosquid.com/3d-models/camp-fire-model-1722247
 - Camping tent: https://www.cgtrader.com/free-3d-models/exterior/other/basic-camping-tente
-- Camping tent 2: https://www.cgtrader.com/free-3d-models/exterior/landscape/low-poly-tent-822ae931-f68d-465e-b4ec-6444c6e4d516
 - Lifeboat? (instead of parachute) : https://www.turbosquid.com/3d-models/lifeboat-life-boat-3ds-free/562178
 - Person : https://www.cgtrader.com/free-3d-models/animals/mammal/low-poly-man-ik-rigged
-- Person (option2): https://www.cgtrader.com/free-3d-models/character/woman/character-0283e57e-7284-40f4-8d75-5646b45b4bf6
+- Person (option2): thttps://www.cgtrader.com/free-3d-models/character/woman/character-0283e57e-7284-40f4-8d75-5646b45b4bf6
 - Person (option3): https://www.cgtrader.com/free-3d-models/character/man/person-human-man
+- Plane : https://www.turbosquid.com/3d-models/plane-render-3d-1192348
