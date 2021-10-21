@@ -27,11 +27,31 @@ let objPalmIsland = {
 };
 let objCarp = {
   obj: "models/fish/Carp.obj",
-  obj: "models/fish/Carp.mtl",
+  mtl: "models/fish/Carp.mtl",
 };
 let objCampFire = {
-  obj: "./models/campfire/Campfire_2.obj",
-  obj: "./models/campfire/Campfire_2.mtl",
+  obj: "./models/campfire/camp_fire.obj",
+  mtl: "./models/campfire/camp_fire.mtl",
+};
+
+let objTent = {
+  obj: "./models/tent/Basiccampingtents.obj",
+  mtl: "./models/tent/Basiccampingtents.mtl",
+};
+
+let objLifeboat = {
+  obj: "./models/lifeboat/LifeBoat.obj",
+  mtl: "./models/lifeboat/LifeBoat.mtl",
+};
+
+let objPlane = {
+  obj: "./models/plane/Plane.obj",
+  mtl: "./models/plane/Plane.mtl",
+};
+
+let objPerson = {
+  obj: "./models/person/person2.obj",
+  mtl: "./models/person/person2.mtl",
 };
 
 function main() {
@@ -61,6 +81,7 @@ async function loadObjMtl(
   objectList,
   yPosition,
   xPosition,
+  zPosition,
   scaleX,
   scaleY,
   scaleZ
@@ -95,6 +116,9 @@ async function loadObjMtl(
     object.position.y += yPosition;
     if (xPosition != 0) {
       object.position.x = xPosition;
+    }
+    if (zPosition != 0) {
+      object.position.z = zPosition;
     }
     object.scale.set(scaleX, scaleY, scaleZ);
 
@@ -163,13 +187,13 @@ function createScene(canvas) {
   directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
 
   // Create and add all the lights
-  directionalLight.position.set(100, 100, 1);
+  directionalLight.position.set(50, 50, 0.5);
   directionalLight.target.position.set(0, 0, 0);
   directionalLight.castShadow = true;
   root.add(directionalLight);
 
   spotLight = new THREE.SpotLight(0xaaaaaa);
-  spotLight.position.set(-2000, 3000, -3000);
+  spotLight.position.set(0, 0, 0);
   spotLight.target.position.set(0, 0, 0);
   root.add(spotLight);
 
@@ -182,25 +206,17 @@ function createScene(canvas) {
   spotLight.shadow.mapSize.width = SHADOW_MAP_WIDTH;
   spotLight.shadow.mapSize.height = SHADOW_MAP_HEIGHT;
 
-  ambientLight = new THREE.AmbientLight(0x444444, 0.8);
+  ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
   root.add(ambientLight);
 
   // Create the objects
-  loadObjMtl(objPalmIsland, objectList, 1, 0, 0.15, 0.15, 0.15);
-  loadObjMtl(objCarp, objectList, 50, -200, 5, 5, 5);
-
-  // Create a group to hold the objects
-  group = new THREE.Object3D();
-  root.add(group);
-
-  // Create the cylinder
-  let geometry = new THREE.CylinderGeometry(1, 2, 2, 50, 10);
-  let mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial());
-  mesh.position.y = 50;
-  mesh.position.x = -200;
-  mesh.castShadow = false;
-  mesh.receiveShadow = true;
-  group.add(mesh);
+  loadObjMtl(objPalmIsland, objectList, 1, 0, 0, 0.15, 0.15, 0.15);
+  loadObjMtl(objCarp, objectList, -13.5, -300, 0, 10, 10, 10);
+  loadObjMtl(objCampFire, objectList, 10, -150, 100, 10, 10, 10);
+  loadObjMtl(objTent, objectList, 8, -150, 0, 0.1, 0.1, 0.1);
+  loadObjMtl(objLifeboat, objectList, -130, 0, -30, 0.5, 0.5, 0.5);
+  loadObjMtl(objPlane, objectList, 140, 0, -30, 0.1, 0.1, 0.1);
+  loadObjMtl(objPerson, objectList, 28, 0, -30, 1, 1, 1);
 
   scene.add(root);
 }

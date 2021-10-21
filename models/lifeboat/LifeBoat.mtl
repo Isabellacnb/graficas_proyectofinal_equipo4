@@ -1,0 +1,70 @@
+# 
+# Wavefront material file
+# Converted by the DEEP Exploration  Deep Exploration 6.0 6.0.2.6082 Release
+# Right Hemisphere, LTD
+# http://www.righthemisphere.com/
+# 
+
+newmtl Lifeboat2
+Ka 0 0 0
+Kd 0.745098 0.745098 0.745098
+Ks 0.0980392 0.0980392 0.0980392
+illum 2
+Ns 45.2548
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Lifeboat
+Ka 0 0 0
+Kd 0.564706 0 0
+Ks 0.0980392 0.0980392 0.0980392
+illum 2
+Ns 64
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Main
+Ka 0 0 0
+Kd 0.745098 0.745098 0.745098
+Ks 0.0980392 0.0980392 0.0980392
+illum 2
+Ns 64
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Lifeboat0
+Ka 0 0 0
+Kd 0.745098 0.745098 0.745098
+Ks 0.0980392 0.0980392 0.0980392
+illum 2
+Ns 64
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
