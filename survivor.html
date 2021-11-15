@@ -5,10 +5,36 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Survivor</title>
-    <script defer type="module" src="suvivor.js"></script>
+    <link
+      rel="stylesheet"
+      href="./css/main.css"
+      <link
+      rel="stylesheet"
+      href="./css/keyframeanimation.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <script src="../libs/tween.js/tween.js"></script>
+    <script src="../libs/keyframe.js/keyframe.js"></script>
+
+    <script defer type="module" src="./suvivor.js"></script>
   </head>
   <body>
     <div id="container">
+      <div id="title">
+        Survivor
+        <br />
+        <button id="start" type="button" class="btn btn-light">
+          Start story
+        </button>
+      </div>
+      <div id="scene2">
+        <button id="next" type="button" class="btn btn-light">Next</button>
+      </div>
       <canvas id="webglcanvas" width="800" height="600"></canvas>
     </div>
   </body>
