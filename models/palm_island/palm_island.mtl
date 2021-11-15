@@ -26,8 +26,8 @@ newmtl sand_2
 	Kd 0.588000 0.588000 0.588000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.00s0000
-	map_Ka texture-sand.jpg
-	map_Kd texture-sand.jpg
+	map_Ka texture-sand-1.jpg
+	map_Kd texture-sand-1.jpg
 
 newmtl wire_028089177
 	Ns 32

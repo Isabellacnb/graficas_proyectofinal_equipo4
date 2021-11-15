@@ -8,21 +8,22 @@ let renderer = null,
   camera = null,
   root = null,
   group = null,
-  objectList = [],
+  island = null,
+  fish = null,
+  fish2 = null,
   waves = null,
   sky = null,
   orbitControls = null;
 
-let cube = null;
-
 let duration = 10,
+  islandAnimator = null,
   boatAnimator = null,
   waveAnimator = null,
   lightAnimator = null,
   waterAnimator = null,
   skyAnimator = null,
-  cameraAnimator = null,
-  loopAnimation = true;
+  fishAnimator = null,
+  cameraAnimator = null;
 
 let currentTime = Date.now();
 
@@ -80,23 +81,43 @@ let objMan = {
   mtl: "./models/Man/Man.mtl",
 };
 
+let isMovingMouse = false;
+
 function main() {
   const canvas = document.getElementById("webglcanvas");
   let startButton = document.getElementById("start");
   let title = document.getElementById("title");
   let scene2 = document.getElementById("scene2");
-  let next = document.getElementById("next");
 
   createMainTitleScene(canvas);
   playSkyAnimation();
 
   startButton.onclick = () => {
     title.innerHTML = "";
-    createFirstScene();
+    createBoatFloatScene();
     playCameraAnimationTitle();
-    playFirstSceneAnimations();
+    playBoatFloatSceneAnimations();
+    group.addEventListener("click", function () {
+      playFishAnimation;
+    });
     scene2.style.display = "block";
   };
+
+  scene2.addEventListener("mousedown", (e) => {
+    isMovingMouse = true;
+  });
+
+  scene2.addEventListener("mousemove", (e) => {
+    if (isMovingMouse) {
+      playBoatArriveScene();
+      playBoatArriveAnimations();
+      scene2.style.display = "none";
+    }
+  });
+
+  document.body.addEventListener("click", (e) => {
+    playFishAnimation();
+  });
 
   update();
 }
@@ -169,7 +190,7 @@ function playSkyAnimation() {
         target: sky.material.map.offset,
       },
     ],
-    loop: loopAnimation,
+    loop: true,
     duration: duration * 1000,
     easing: TWEEN.Easing.Sinusoidal.In,
   });
@@ -193,9 +214,10 @@ function playCameraAnimationTitle() {
   });
   cameraAnimator.start();
 }
-function createFirstScene() {
+function createBoatFloatScene() {
   // Create a group to hold the objects
   group = new THREE.Object3D();
+  fish = new THREE.Object3D();
 
   // Create a texture map
   let waterMap = new THREE.TextureLoader().load(waterMapUrl);
@@ -213,12 +235,14 @@ function createFirstScene() {
 
   // Add the waves to our group
   root.add(waves);
-
-  loadObjMtl(objLifeboat, objectList, -38, -16, 38, 0.15, 0.15, 0.15);
+  loadObjMtl(objLifeboat, -38, -16, 38, 0.15, 0.15, 0.15);
+  loadObjMtl(objCarp, -13, -5, 0, 3.5, 3.5, 3.5);
+  loadObjMtl(objCarp, 18, -5, -20, 3, 3, 3);
 
   root.add(group);
+  root.add(fish);
 }
-function playFirstSceneAnimations() {
+function playBoatFloatSceneAnimations() {
   // position animation
   group.position.set(0, 0, 0);
   group.rotation.set(0, 0, 0);
@@ -251,7 +275,7 @@ function playFirstSceneAnimations() {
         target: group.rotation,
       },
     ],
-    loop: loopAnimation,
+    loop: true,
     duration: duration * 1000,
     easing: TWEEN.Easing.Bounce.InOut,
   });
@@ -266,13 +290,13 @@ function playFirstSceneAnimations() {
         keys: [0, 0.5, 1],
         values: [
           { x: -Math.PI / 2, y: 0 },
-          { x: -Math.PI / 2.2, y: 0 },
+          { x: -Math.PI / 2.05, y: 0 },
           { x: -Math.PI / 2, y: 0 },
         ],
         target: waves.rotation,
       },
     ],
-    loop: loopAnimation,
+    loop: true,
     duration: duration * 1000,
   });
   waveAnimator.start();
@@ -286,8 +310,8 @@ function playFirstSceneAnimations() {
         keys: [0, 0.4, 0.6, 0.7, 0.8, 1],
         values: [
           { r: 1, g: 1, b: 1 },
-          { r: 0.66, g: 0.66, b: 0.66 },
-          { r: 0.444, g: 0.444, b: 0.444 },
+          { r: 0.778, g: 0.778, b: 0.778 },
+          { r: 0.556, g: 0.556, b: 0.556 },
           { r: 0.667, g: 0.667, b: 0.667 },
           { r: 0.887, g: 0.887, b: 0.887 },
           { r: 0.9, g: 0.9, b: 0.9 },
@@ -295,7 +319,7 @@ function playFirstSceneAnimations() {
         target: directionalLight.color,
       },
     ],
-    loop: loopAnimation,
+    loop: true,
     duration: duration * 1000,
   });
   lightAnimator.start();
@@ -307,20 +331,141 @@ function playFirstSceneAnimations() {
       {
         keys: [0, 1],
         values: [
-          { x: 0, y: 0 },
-          { x: 1, y: 0 },
+          { x: 0.2, y: 0 },
+          { x: 0.5, y: 0 },
         ],
         target: waves.material.map.offset,
       },
     ],
-    loop: loopAnimation,
+    loop: true,
     duration: duration * 1000,
     easing: TWEEN.Easing.Sinusoidal.In,
   });
   waterAnimator.start();
 }
 
-function finishFirstScene(canvas) {}
+function playFishAnimation() {
+  // fish animation
+  console.log(fish);
+  fish.position.set(0, 0, 0);
+  fishAnimator = new KF.KeyFrameAnimator();
+  fishAnimator.init({
+    interps: [
+      {
+        keys: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+        values: [
+          { x: -13, y: -5, z: 0 },
+          { x: -10, y: -3, z: 0.25 },
+          { x: -9, y: -1, z: 0.5 },
+          { x: -6, y: 1, z: 0.25 },
+          { x: -3, y: 3, z: 0 },
+          { x: -1, y: 5, z: 0 },
+          { x: 2, y: 6, z: 0 },
+          { x: 4, y: 5, z: 0 },
+          { x: 5, y: 3, z: 0 },
+          { x: 6, y: 0, z: 0 },
+        ],
+        target: fish.position,
+      },
+      {
+        keys: [0, 0.25, 0.5, 0.75, 1],
+        values: [
+          { x: 0, z: 0 },
+          { x: Math.PI / 12, z: Math.PI / 12 },
+          { x: 0, z: Math.PI / 12 },
+          { x: -Math.PI / 12, z: -Math.PI / 12 },
+          { x: 0, z: 0 },
+        ],
+        target: fish.rotation,
+      },
+    ],
+    loop: false,
+    duration: duration * 150,
+    easing: TWEEN.Easing.Linear.None,
+  });
+  fishAnimator.start();
+}
+
+function playBoatArriveScene() {
+  island = new THREE.Object3D();
+
+  loadObjMtl(objPalmIsland, 270, 0, 2, 0.2, 0.2, 0.2);
+
+  root.add(island);
+}
+
+function playBoatArriveAnimations() {
+  islandAnimator = new KF.KeyFrameAnimator();
+  islandAnimator.init({
+    interps: [
+      {
+        keys: [0, 0.2, 0.25, 0.375, 0.5, 0.9, 1],
+        values: [
+          { x: 270, y: 0, z: 2 },
+          { x: 200, y: 0, z: 2 },
+          { x: 150, y: 0, z: 2 },
+          { x: 110, y: 0, z: 2 },
+          { x: 70, y: 0, z: 2 },
+          { x: 20, y: 0, z: 2 },
+          { x: -20, y: 0, z: 2 },
+        ],
+        target: island.position,
+      },
+    ],
+    loop: false,
+    duration: duration * 100,
+    easing: TWEEN.Easing.Linear.None,
+  });
+  islandAnimator.start();
+  cameraAnimator.init({
+    interps: [
+      {
+        keys: [0, 1],
+        values: [
+          { x: 0, y: 7, z: 45 },
+          { x: -28, y: 14, z: 60 },
+        ],
+        target: camera.position,
+      },
+    ],
+    duration: duration * 800,
+  });
+  cameraAnimator.start();
+
+  boatAnimator.init({
+    interps: [
+      {
+        keys: [0, 0.2, 0.4, 0.6, 0.8, 0.9, 1],
+        values: [
+          { x: 0, y: 0, z: 0 },
+          { x: 1, y: 0, z: 0.5 },
+          { x: 3, y: 0, z: 0 },
+          { x: 6, y: 0.25, z: 0.25 },
+          { x: 9, y: 1, z: 1 },
+          { x: 12, y: 0.25, z: 0.25 },
+          { x: 19, y: 0.75, z: 0.75 },
+        ],
+        target: group.position,
+      },
+      {
+        keys: [0, 0.25, 0.5, 0.75, 1],
+        values: [
+          { x: 0, z: 0 },
+          { x: Math.PI / 12, z: Math.PI / 12 },
+          { x: 0, z: Math.PI / 12 },
+          { x: -Math.PI / 12, z: -Math.PI / 12 },
+          { x: 0, z: 0 },
+        ],
+        target: group.rotation,
+      },
+    ],
+    loop: false,
+    duration: duration * 500,
+    easing: TWEEN.Easing.Linear.None,
+  });
+  boatAnimator.start();
+  group.position.set(19, 2, 2);
+}
 
 // Helper Functions
 function onError(err) {
@@ -335,16 +480,7 @@ function onProgress(xhr) {
     );
   }
 }
-async function loadObjMtl(
-  objModelUrl,
-  objectList,
-  xPosition,
-  yPosition,
-  zPosition,
-  scaleX,
-  scaleY,
-  scaleZ
-) {
+async function loadObjMtl(objModelUrl, x, y, z, scaleX, scaleY, scaleZ) {
   try {
     const mtlLoader = new MTLLoader();
 
@@ -377,18 +513,25 @@ async function loadObjMtl(
     }
 
     // object.position.y += yPosition;
-    if (yPosition != 0) {
-      object.position.y = yPosition;
+    if (y != 0) {
+      object.position.y = y;
     }
-    if (xPosition != 0) {
-      object.position.x = xPosition;
+    if (x != 0) {
+      object.position.x = x;
     }
-    if (zPosition != 0) {
-      object.position.z = zPosition;
+    if (z != 0) {
+      object.position.z = z;
     }
-
     object.scale.set(scaleX, scaleY, scaleZ);
-    group.add(object);
+
+    if (objModelUrl == objPalmIsland) {
+      island.add(object);
+    } else if (objModelUrl == objCarp) {
+      object.rotation.y = Math.PI / 2;
+      fish.add(object);
+    } else {
+      group.add(object);
+    }
   } catch (err) {
     onError(err);
   }
