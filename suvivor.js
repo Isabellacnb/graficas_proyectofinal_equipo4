@@ -23,6 +23,7 @@ let duration = 10,
   waterAnimator = null,
   skyAnimator = null,
   fishAnimator = null,
+  rodAnimator = null,
   cameraAnimator = null;
 
 let currentTime = Date.now();
@@ -49,17 +50,14 @@ let objCampFire = {
   obj: "./models/campfire/camp_fire.obj",
   mtl: "./models/campfire/camp_fire.mtl",
 };
-
 let objTent = {
   obj: "./models/tent/Basiccampingtents.obj",
   mtl: "./models/tent/Basiccampingtents.mtl",
 };
-
 let objLifeboat = {
   obj: "./models/lifeboat/LifeBoat.obj",
   mtl: "./models/lifeboat/LifeBoat.mtl",
 };
-
 let objPlane = {
   obj: "./models/plane/Plane.obj",
   mtl: "./models/plane/Plane.mtl",
@@ -81,16 +79,23 @@ let objMan = {
   mtl: "./models/Man/Man.mtl",
 };
 
-let isMovingMouse = false;
+let isMovingMouse = false,
+  fishingTries = 0;
 
 function main() {
+  // play audio
+  var audio = new Audio("ocean2.mp3");
+  audio.volume = 0.4;
+  audio.play();
+
   const canvas = document.getElementById("webglcanvas");
   let startButton = document.getElementById("start");
   let title = document.getElementById("title");
   let waterDiv = document.getElementById("water");
-  let scene2 = document.getElementById("scene2");
-  let continueS2 = document.getElementById("continueS2");
-  let continueS3 = document.getElementById("continueS3");
+  let sceneBoatFloat = document.getElementById("sceneBoatFloat");
+  let continueSceneBoat = document.getElementById("continueSceneBoat");
+  let continueSceneHelp = document.getElementById("continueSceneHelp");
+  let rodDiv = document.getElementById("rod");
 
   createMainTitleScene(canvas);
   playSkyAnimation();
@@ -103,34 +108,39 @@ function main() {
     group.addEventListener("click", function () {
       playFishFlyAnimation;
     });
-    scene2.style.display = "block";
+    sceneBoatFloat.style.display = "block";
     waterDiv.style.display = "block";
   };
 
-  scene2.addEventListener("mousedown", (e) => {
+  sceneBoatFloat.addEventListener("mousedown", (e) => {
     isMovingMouse = true;
   });
 
-  scene2.addEventListener("mousemove", (e) => {
+  sceneBoatFloat.addEventListener("mousemove", (e) => {
     if (isMovingMouse) {
       playBoatArriveScene();
       playBoatArriveAnimations();
       isMovingMouse = false;
-      scene2.style.display = "none";
-      continueS2.style.display = "block";
+      sceneBoatFloat.style.display = "none";
+      continueSceneBoat.style.display = "block";
     }
   });
-  continueS2.onclick = () => {
+  continueSceneBoat.onclick = () => {
     playTransitionToHelp();
-    continueS2.style.display = "none";
-    continueS3.style.display = "block";
+    continueSceneBoat.style.display = "none";
+    continueSceneHelp.style.display = "block";
     waterDiv.style.display = "none";
   };
 
-  continueS3.onclick = () => {
+  continueSceneHelp.onclick = () => {
     playTransitionToFishing();
-    continueS3.style.display = "none";
+    continueSceneHelp.style.display = "none";
     createFishingScene();
+    rodDiv.style.display = "block";
+    waterDiv.style.width = "70%";
+    waterDiv.style.height = "60%";
+    waterDiv.style.marginTop = "30%";
+    waterDiv.style.display = "block";
   };
 
   waterDiv.onclick = () => {
@@ -139,9 +149,18 @@ function main() {
     }
   };
 
+  rodDiv.onclick = () => {
+    if (group) {
+      playFishingAnimations();
+      fishingTries += 1;
+    }
+    if (fishingTries > 2) {
+      playFishedAnimation();
+    }
+  };
+
   update();
 }
-
 function createMainTitleScene(canvas) {
   // Create the Three.js renderer and attach it to our canvas
   renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
@@ -364,7 +383,6 @@ function playBoatFloatSceneAnimations() {
 }
 function playFishFlyAnimation() {
   // fish animation
-  console.log(fish);
   fish.position.set(0, 0, 0);
   fishAnimator = new KF.KeyFrameAnimator();
   fishAnimator.init({
@@ -411,6 +429,8 @@ function playBoatArriveScene() {
   root.add(island);
 }
 function playBoatArriveAnimations() {
+  group.position.set(0, 0, 0);
+  group.rotation.set(0, 0, 0);
   islandAnimator = new KF.KeyFrameAnimator();
   islandAnimator.init({
     interps: [
@@ -454,8 +474,8 @@ function playBoatArriveAnimations() {
         keys: [0, 0.2, 0.4, 0.6, 0.8, 0.9, 1],
         values: [
           { x: 0, y: 0, z: 0 },
-          { x: 1, y: 0, z: 0.5 },
-          { x: 3, y: 0, z: 0 },
+          { x: 1, y: 0, z: 0.25 },
+          { x: 3, y: 0, z: 0.25 },
           { x: 6, y: 0.25, z: 0.25 },
           { x: 9, y: 1, z: 1 },
           { x: 12, y: 0.25, z: 0.25 },
@@ -477,7 +497,7 @@ function playBoatArriveAnimations() {
     ],
     loop: false,
     duration: duration * 500,
-    easing: TWEEN.Easing.Linear.None,
+    easing: TWEEN.Easing.Cubic.InOut,
   });
   boatAnimator.start();
   group.position.set(19, 2, 2);
@@ -491,7 +511,7 @@ function playTransitionToHelp() {
         values: [
           { r: 1, g: 1, b: 1 },
           { r: 0.1, g: 0.1, b: 0.1 },
-          { r: 4, g: 6, b: 4 },
+          { r: 0, g: 0, b: 0 },
           { r: 0.1, g: 0.1, b: 0.1 },
           { r: 1, g: 1, b: 1 },
         ],
@@ -502,7 +522,7 @@ function playTransitionToHelp() {
         values: [
           { r: 1, g: 1, b: 1 },
           { r: 0.5, g: 0.5, b: 0.5 },
-          { r: 4, g: 6, b: 4 },
+          { r: 0, g: 0, b: 0 },
           { r: 0.5, g: 0.5, b: 0.5 },
           { r: 0.8, g: 0.8, b: 0.8 },
         ],
@@ -574,7 +594,7 @@ function playTransitionToFishing() {
         keys: [0, 1],
         values: [
           { x: -120, y: 20, z: -100 },
-          { x: 90, y: 10, z: 120 },
+          { x: 95, y: 10, z: 120 },
         ],
         target: camera.position,
       },
@@ -589,8 +609,102 @@ function playTransitionToFishing() {
   fish.clear();
 }
 function createFishingScene() {
-  loadObjMtl(objfRod, 10, 20, 55, 6, 6, 6);
+  loadObjMtl(objfRod, 32, 22, 5, 6, 6, 6);
+  loadObjMtl(objCarp, 30, -10, 50, 23, 23, 23);
+  root.add(fish);
   root.add(group);
+}
+function playFishingAnimations() {
+  // position animation
+  group.position.set(0, 0, 0);
+  group.rotation.set(0, 0, 0);
+
+  rodAnimator = new KF.KeyFrameAnimator();
+  rodAnimator.init({
+    interps: [
+      {
+        keys: [0, 0.5, 1],
+        values: [
+          { x: 0, y: 0, z: 0 },
+          { x: 0.25, y: 0.25, z: 0 },
+          { x: 0, y: 0, z: 0 },
+        ],
+        target: group.position,
+      },
+      {
+        keys: [0, 0.5, 1],
+        values: [
+          { x: 0, z: 0 },
+          { x: 0, z: Math.PI / 12 },
+          { x: 0, z: 0 },
+        ],
+        target: group.rotation,
+      },
+    ],
+    loop: false,
+    duration: duration * 100,
+    easing: TWEEN.Easing.Bounce.InOut,
+  });
+  rodAnimator.start();
+}
+function playFishedAnimation() {
+  fish.position.set(-40, -90, 0);
+
+  // rod animation
+  fish.rotation.set(0, 0, Math.PI / 2);
+  rodAnimator.init({
+    interps: [
+      {
+        keys: [0, 0.5, 1],
+        values: [
+          { x: 0, y: 0, z: 0 },
+          { x: 1, y: 1, z: 1 },
+          { x: 0, y: 0, z: 0 },
+        ],
+        target: group.position,
+      },
+      {
+        keys: [0, 0.5, 1],
+        values: [
+          { x: 0, z: 0 },
+          { x: 0, z: Math.PI / 12 },
+          { x: 0, z: 0 },
+        ],
+        target: group.rotation,
+      },
+    ],
+    loop: false,
+    duration: duration * 150,
+    easing: TWEEN.Easing.Bounce.In,
+  });
+  rodAnimator.start();
+
+  // fish animation
+  fishAnimator = new KF.KeyFrameAnimator();
+  fishAnimator.init({
+    interps: [
+      {
+        keys: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+        values: [
+          { x: -40, y: -60, z: 0 },
+          { x: -10, y: -65, z: 0 },
+          { x: -10, y: -65, z: 0 },
+          { x: -15, y: -65, z: 0 },
+          { x: -10, y: -60, z: 0 },
+          { x: -10, y: -60, z: 0 },
+          { x: -10, y: -54, z: 0 },
+          { x: -10, y: -44, z: 0 },
+          { x: 0, y: 0, z: 0 },
+          { x: 70, y: 70, z: 0 },
+        ],
+        target: fish.position,
+      },
+    ],
+    loop: false,
+    duration: duration * 200,
+    easing: TWEEN.Easing.Bounce.In,
+  });
+  fishAnimator.start();
 }
 
 // Helper Functions
@@ -641,7 +755,7 @@ async function loadObjMtl(objModelUrl, x, y, z, scaleX, scaleY, scaleZ) {
       object.rotation.y = Math.PI / 2;
     }
     if (objModelUrl == objfRod) {
-      object.rotation.y = -Math.PI / 2;
+      object.rotation.y = -Math.PI / 1.5;
     }
 
     // object.position.y += yPosition;

@@ -23,7 +23,7 @@ body {
   display: block;
 }
 
-#scene2 {
+#sceneBoatFloat {
   position: absolute;
   align-items: center;
   height: 20%;
@@ -33,16 +33,30 @@ body {
   width: 100%;
 }
 
-#continueS2 {
+#continueSceneBoat {
   position: absolute;
   display: none;
   margin: 30px;
 }
 
-#continueS3 {
+#continueSceneHelp {
   position: absolute;
   display: none;
   margin: 30px;
+}
+#continueSceneFishing {
+  position: absolute;
+  display: none;
+  margin: 30px;
+}
+
+#rod {
+  position: absolute;
+  width: 73%;
+  margin-top: 10%;
+  height: 20%;
+  margin-left: 27%;
+  display: none;
 }
 
 #water {
