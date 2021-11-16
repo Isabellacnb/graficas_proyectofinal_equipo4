@@ -87,7 +87,10 @@ function main() {
   const canvas = document.getElementById("webglcanvas");
   let startButton = document.getElementById("start");
   let title = document.getElementById("title");
+  let waterDiv = document.getElementById("water");
   let scene2 = document.getElementById("scene2");
+  let continueS2 = document.getElementById("continueS2");
+  let continueS3 = document.getElementById("continueS3");
 
   createMainTitleScene(canvas);
   playSkyAnimation();
@@ -98,9 +101,10 @@ function main() {
     playCameraAnimationTitle();
     playBoatFloatSceneAnimations();
     group.addEventListener("click", function () {
-      playFishAnimation;
+      playFishFlyAnimation;
     });
     scene2.style.display = "block";
+    waterDiv.style.display = "block";
   };
 
   scene2.addEventListener("mousedown", (e) => {
@@ -111,13 +115,29 @@ function main() {
     if (isMovingMouse) {
       playBoatArriveScene();
       playBoatArriveAnimations();
+      isMovingMouse = false;
       scene2.style.display = "none";
+      continueS2.style.display = "block";
     }
   });
+  continueS2.onclick = () => {
+    playTransitionToHelp();
+    continueS2.style.display = "none";
+    continueS3.style.display = "block";
+    waterDiv.style.display = "none";
+  };
 
-  document.body.addEventListener("click", (e) => {
-    playFishAnimation();
-  });
+  continueS3.onclick = () => {
+    playTransitionToFishing();
+    continueS3.style.display = "none";
+    createFishingScene();
+  };
+
+  waterDiv.onclick = () => {
+    if (fish) {
+      playFishFlyAnimation();
+    }
+  };
 
   update();
 }
@@ -175,7 +195,6 @@ function createMainTitleScene(canvas) {
   // Nos add group to our scene
   scene.add(root);
 }
-
 function playSkyAnimation() {
   // sky animation
   skyAnimator = new KF.KeyFrameAnimator();
@@ -343,8 +362,7 @@ function playBoatFloatSceneAnimations() {
   });
   waterAnimator.start();
 }
-
-function playFishAnimation() {
+function playFishFlyAnimation() {
   // fish animation
   console.log(fish);
   fish.position.set(0, 0, 0);
@@ -385,7 +403,6 @@ function playFishAnimation() {
   });
   fishAnimator.start();
 }
-
 function playBoatArriveScene() {
   island = new THREE.Object3D();
 
@@ -393,7 +410,6 @@ function playBoatArriveScene() {
 
   root.add(island);
 }
-
 function playBoatArriveAnimations() {
   islandAnimator = new KF.KeyFrameAnimator();
   islandAnimator.init({
@@ -428,7 +444,7 @@ function playBoatArriveAnimations() {
         target: camera.position,
       },
     ],
-    duration: duration * 800,
+    duration: duration * 400,
   });
   cameraAnimator.start();
 
@@ -465,6 +481,116 @@ function playBoatArriveAnimations() {
   });
   boatAnimator.start();
   group.position.set(19, 2, 2);
+}
+function playTransitionToHelp() {
+  // color animation
+  lightAnimator.init({
+    interps: [
+      {
+        keys: [0, 0.4, 0.6, 0.8, 1],
+        values: [
+          { r: 1, g: 1, b: 1 },
+          { r: 0.1, g: 0.1, b: 0.1 },
+          { r: 4, g: 6, b: 4 },
+          { r: 0.1, g: 0.1, b: 0.1 },
+          { r: 1, g: 1, b: 1 },
+        ],
+        target: directionalLight.color,
+      },
+      {
+        keys: [0, 0.4, 0.6, 0.8, 1],
+        values: [
+          { r: 1, g: 1, b: 1 },
+          { r: 0.5, g: 0.5, b: 0.5 },
+          { r: 4, g: 6, b: 4 },
+          { r: 0.5, g: 0.5, b: 0.5 },
+          { r: 0.8, g: 0.8, b: 0.8 },
+        ],
+        target: ambientLight.color,
+      },
+    ],
+    loop: false,
+    duration: duration * 100,
+    easing: TWEEN.Easing.Circular.Out,
+  });
+  lightAnimator.start();
+
+  cameraAnimator.init({
+    interps: [
+      {
+        keys: [0, 1],
+        values: [
+          { x: -28, y: 14, z: 60 },
+          { x: -120, y: 20, z: -100 },
+        ],
+        target: camera.position,
+      },
+    ],
+    loop: false,
+    duration: duration * 100,
+    easing: TWEEN.Easing.Circular.Out,
+  });
+  cameraAnimator.start();
+
+  group.clear();
+  fish.clear();
+}
+function playTransitionToFishing() {
+  // color animation
+  lightAnimator.init({
+    interps: [
+      {
+        keys: [0, 0.4, 0.6, 0.8, 1],
+        values: [
+          { r: 1, g: 1, b: 1 },
+          { r: 0.1, g: 0.1, b: 0.1 },
+          { r: 0, g: 0, b: 0 },
+          { r: 0.1, g: 0.1, b: 0.1 },
+          { r: 1, g: 1, b: 1 },
+        ],
+        target: directionalLight.color,
+      },
+      {
+        keys: [0, 0.4, 0.6, 0.8, 1],
+        values: [
+          { r: 1, g: 1, b: 1 },
+          { r: 0.5, g: 0.5, b: 0.5 },
+          { r: 0, g: 0, b: 0 },
+          { r: 0.5, g: 0.5, b: 0.5 },
+          { r: 0.8, g: 0.8, b: 0.8 },
+        ],
+        target: ambientLight.color,
+      },
+    ],
+    loop: false,
+    duration: duration * 100,
+    easing: TWEEN.Easing.Circular.Out,
+  });
+  lightAnimator.start();
+
+  cameraAnimator.init({
+    interps: [
+      {
+        keys: [0, 1],
+        values: [
+          { x: -120, y: 20, z: -100 },
+          { x: 90, y: 10, z: 120 },
+        ],
+        target: camera.position,
+      },
+    ],
+    loop: false,
+    duration: duration * 100,
+    easing: TWEEN.Easing.Circular.Out,
+  });
+  cameraAnimator.start();
+
+  group.clear();
+  fish.clear();
+}
+function createFishingScene() {
+  loadObjMtl(objfRod, 10, 20, 55, 6, 6, 6);
+  root.add(group);
 }
 
 // Helper Functions
@@ -511,6 +637,12 @@ async function loadObjMtl(objModelUrl, x, y, z, scaleX, scaleY, scaleZ) {
     if (objModelUrl == objLifeboat) {
       object.rotation.x = -Math.PI / 2;
     }
+    if (objModelUrl == objCarp) {
+      object.rotation.y = Math.PI / 2;
+    }
+    if (objModelUrl == objfRod) {
+      object.rotation.y = -Math.PI / 2;
+    }
 
     // object.position.y += yPosition;
     if (y != 0) {
@@ -527,7 +659,6 @@ async function loadObjMtl(objModelUrl, x, y, z, scaleX, scaleY, scaleZ) {
     if (objModelUrl == objPalmIsland) {
       island.add(object);
     } else if (objModelUrl == objCarp) {
-      object.rotation.y = Math.PI / 2;
       fish.add(object);
     } else {
       group.add(object);

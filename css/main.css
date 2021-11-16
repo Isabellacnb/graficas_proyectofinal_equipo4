@@ -33,6 +33,26 @@ body {
   width: 100%;
 }
 
+#continueS2 {
+  position: absolute;
+  display: none;
+  margin: 30px;
+}
+
+#continueS3 {
+  position: absolute;
+  display: none;
+  margin: 30px;
+}
+
+#water {
+  position: absolute;
+  width: 100%;
+  height: 75%;
+  display: none;
+  margin-top: 25%;
+}
+
 p {
   color: white;
   margin-top: 25px;
