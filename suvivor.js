@@ -10,7 +10,6 @@ let renderer = null,
   group = null,
   island = null,
   fish = null,
-  fish2 = null,
   waves = null,
   sky = null,
   orbitControls = null;
@@ -77,6 +76,10 @@ let objbackpack = {
 let objMan = {
   obj: "./models/Man/Man.obj",
   mtl: "./models/Man/Man.mtl",
+};
+
+let objInitTent = {
+  obj: "./models/",
 };
 
 let isMovingMouse = false,
@@ -587,14 +590,13 @@ function playTransitionToFishing() {
     easing: TWEEN.Easing.Circular.Out,
   });
   lightAnimator.start();
-
   cameraAnimator.init({
     interps: [
       {
         keys: [0, 1],
         values: [
           { x: -120, y: 20, z: -100 },
-          { x: 95, y: 10, z: 120 },
+          { x: 95, y: 15, z: 120 },
         ],
         target: camera.position,
       },
@@ -610,7 +612,7 @@ function playTransitionToFishing() {
 }
 function createFishingScene() {
   loadObjMtl(objfRod, 32, 22, 5, 6, 6, 6);
-  loadObjMtl(objCarp, 30, -10, 50, 23, 23, 23);
+  loadObjMtl(objCarp, 10, -10, 50, 23, 23, 23);
   root.add(fish);
   root.add(group);
 }
@@ -674,7 +676,7 @@ function playFishedAnimation() {
       },
     ],
     loop: false,
-    duration: duration * 150,
+    duration: duration * 250,
     easing: TWEEN.Easing.Bounce.In,
   });
   rodAnimator.start();
