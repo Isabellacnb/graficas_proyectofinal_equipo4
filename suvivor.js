@@ -23,6 +23,8 @@ let duration = 10,
   skyAnimator = null,
   fishAnimator = null,
   rodAnimator = null,
+  logsAnimator = null,
+  planeAnimator = null,
   cameraAnimator = null;
 
 let currentTime = Date.now();
@@ -79,7 +81,8 @@ let objMan = {
 };
 
 let objInitTent = {
-  obj: "./models/",
+  obj: "./models/initTent/Firewood.obj",
+  mtl: "./models/initTent/Firewood.mtl",
 };
 
 let isMovingMouse = false,
@@ -88,7 +91,7 @@ let isMovingMouse = false,
 function main() {
   // play audio
   var audio = new Audio("ocean2.mp3");
-  audio.volume = 0.4;
+  audio.volume = 0.5;
   audio.play();
 
   const canvas = document.getElementById("webglcanvas");
@@ -98,7 +101,11 @@ function main() {
   let sceneBoatFloat = document.getElementById("sceneBoatFloat");
   let continueSceneBoat = document.getElementById("continueSceneBoat");
   let continueSceneHelp = document.getElementById("continueSceneHelp");
+  let continueSceneTent = document.getElementById("continueSceneTent");
+  let continueSceneSaved = document.getElementById("continueSceneSaved");
   let rodDiv = document.getElementById("rod");
+  let logsDiv = document.getElementById("logs");
+  let planeFlyDiv = document.getElementById("planeFly");
 
   createMainTitleScene(canvas);
   playSkyAnimation();
@@ -128,6 +135,19 @@ function main() {
       continueSceneBoat.style.display = "block";
     }
   });
+
+  planeFlyDiv.addEventListener("mousedown", (e) => {
+    isMovingMouse = true;
+  });
+
+  planeFlyDiv.addEventListener("mousemove", () => {
+    if (isMovingMouse) {
+      playPlaneFlyAnimations();
+      isMovingMouse = false;
+      planeFlyDiv.style.displey = "none";
+    }
+  });
+
   continueSceneBoat.onclick = () => {
     playTransitionToHelp();
     continueSceneBoat.style.display = "none";
@@ -144,6 +164,23 @@ function main() {
     waterDiv.style.height = "60%";
     waterDiv.style.marginTop = "30%";
     waterDiv.style.display = "block";
+    continueSceneTent.style.display = "block";
+  };
+
+  continueSceneTent.onclick = () => {
+    createTentScene();
+    playTransitionToTent();
+    waterDiv.style.display = "none";
+    rodDiv.style.display = "none";
+    logsDiv.style.display = "block";
+    continueSceneTent.style.display = "none";
+    continueSceneSaved.style.display = "block";
+  };
+
+  continueSceneSaved.onclick = () => {
+    playTransitionToSaved();
+    continueSceneSaved.style.display = "none";
+    planeFlyDiv.style.display = "block";
   };
 
   waterDiv.onclick = () => {
@@ -159,6 +196,14 @@ function main() {
     }
     if (fishingTries > 2) {
       playFishedAnimation();
+    }
+  };
+
+  logsDiv.ondblclick = () => {
+    if (group) {
+      logsDiv.style.display = "none";
+      playLogsAnimations();
+      setTimeout(buildTent(), 6000);
     }
   };
 
@@ -188,6 +233,10 @@ function createMainTitleScene(canvas) {
     4000
   );
   camera.position.set(0, 50, 1000);
+
+  // scene.background = new THREE.CubeTextureLoader()
+  //   .setPath("./models/skyboxsun25deg")
+  //   .load(["px.png", "nx.png", "py.png", "ny.png", "pz.png", "nz.png"]);
 
   orbitControls = new OrbitControls(camera, renderer.domElement);
 
@@ -440,7 +489,7 @@ function playBoatArriveAnimations() {
       {
         keys: [0, 0.2, 0.25, 0.375, 0.5, 0.9, 1],
         values: [
-          { x: 270, y: 0, z: 2 },
+          { x: 250, y: 0, z: 2 },
           { x: 200, y: 0, z: 2 },
           { x: 150, y: 0, z: 2 },
           { x: 110, y: 0, z: 2 },
@@ -708,7 +757,169 @@ function playFishedAnimation() {
   });
   fishAnimator.start();
 }
+function playTransitionToTent() {
+  // color animation
+  lightAnimator.init({
+    interps: [
+      {
+        keys: [0, 0.4, 0.6, 0.8, 1],
+        values: [
+          { r: 1, g: 1, b: 1 },
+          { r: 0.1, g: 0.1, b: 0.1 },
+          { r: 0, g: 0, b: 0 },
+          { r: 0.1, g: 0.1, b: 0.1 },
+          { r: 1, g: 1, b: 1 },
+        ],
+        target: directionalLight.color,
+      },
+      {
+        keys: [0, 0.4, 0.6, 0.8, 1],
+        values: [
+          { r: 1, g: 1, b: 1 },
+          { r: 0.5, g: 0.5, b: 0.5 },
+          { r: 0, g: 0, b: 0 },
+          { r: 0.5, g: 0.5, b: 0.5 },
+          { r: 0.8, g: 0.8, b: 0.8 },
+        ],
+        target: ambientLight.color,
+      },
+    ],
+    loop: false,
+    duration: duration * 100,
+    easing: TWEEN.Easing.Circular.Out,
+  });
+  lightAnimator.start();
+  cameraAnimator.init({
+    interps: [
+      {
+        keys: [0, 1],
+        values: [
+          { x: 95, y: 15, z: 120 },
+          { x: 110, y: 17, z: 0 },
+        ],
+        target: camera.position,
+      },
+    ],
+    loop: false,
+    duration: duration * 100,
+    easing: TWEEN.Easing.Circular.Out,
+  });
+  cameraAnimator.start();
 
+  group.clear();
+  fish.clear();
+}
+function createTentScene() {
+  loadObjMtl(objInitTent, 60, 8, 0, 0.1, 0.1, 0.1);
+  root.add(group);
+}
+function playLogsAnimations() {
+  // position animation
+  logsAnimator = new KF.KeyFrameAnimator();
+  logsAnimator.init({
+    interps: [
+      {
+        keys: [0, 0.5, 1],
+        values: [
+          { x: 19, y: 0.75, z: 0.74 },
+          { x: 16, y: 1, z: 0 },
+          { x: 19, y: 0.75, z: 0.74 },
+        ],
+        target: group.position,
+      },
+    ],
+    duration: duration * 100,
+    easing: TWEEN.Easing.Bounce.InOut,
+  });
+  logsAnimator.start();
+}
+function buildTent() {
+  group.clear();
+  loadObjMtl(objTent, 60, 8.5, 0, 0.08, 0.08, 0.08);
+  console.log(group.position);
+
+  // spotLight.target.position.set(19, 0.75, 0.75);
+  console.log(spotLight.target.position);
+
+  root.add(spotLight);
+  root.add(group);
+}
+function playTransitionToSaved() {
+  // color animation
+  lightAnimator.init({
+    interps: [
+      {
+        keys: [0, 0.4, 0.6, 0.8, 1],
+        values: [
+          { r: 1, g: 1, b: 1 },
+          { r: 0.1, g: 0.1, b: 0.1 },
+          { r: 0, g: 0, b: 0 },
+          { r: 0.1, g: 0.1, b: 0.1 },
+          { r: 1, g: 1, b: 1 },
+        ],
+        target: directionalLight.color,
+      },
+      {
+        keys: [0, 0.4, 0.6, 0.8, 1],
+        values: [
+          { r: 1, g: 1, b: 1 },
+          { r: 0.5, g: 0.5, b: 0.5 },
+          { r: 0, g: 0, b: 0 },
+          { r: 0.5, g: 0.5, b: 0.5 },
+          { r: 0.8, g: 0.8, b: 0.8 },
+        ],
+        target: ambientLight.color,
+      },
+    ],
+    loop: false,
+    duration: duration * 100,
+    easing: TWEEN.Easing.Circular.Out,
+  });
+  lightAnimator.start();
+  cameraAnimator.init({
+    interps: [
+      {
+        keys: [0, 1],
+        values: [
+          { x: 110, y: 17, z: 0 },
+          { x: -280, y: 15, z: -100 },
+        ],
+        target: camera.position,
+      },
+    ],
+    loop: false,
+    duration: duration * 100,
+    easing: TWEEN.Easing.Circular.Out,
+  });
+  cameraAnimator.start();
+
+  group.clear();
+}
+function playPlaneFlyAnimations() {
+  loadObjMtl(objPlane, 270, 0, 2, 0.2, 0.2, 0.2);
+  group.position.set(0, 0, 0);
+  group.rotation.set(0, 0, 0);
+  planeAnimator = new KF.KeyFrameAnimator();
+  planeAnimator.init({
+    interps: [
+      {
+        keys: [0, 0.45, 0.5, 0.55, 1],
+        values: [
+          { x: -150, y: 200, z: 420 },
+          { x: -150, y: 50, z: 0 },
+          { x: -150, y: 50, z: 0 },
+          { x: -150, y: 50, z: 0 },
+          { x: -150, y: 200, z: -470 },
+        ],
+        target: group.position,
+      },
+    ],
+    loop: false,
+    duration: duration * 500,
+    easing: TWEEN.Easing.Linear.None,
+  });
+  planeAnimator.start();
+}
 // Helper Functions
 function onError(err) {
   console.error(err);
@@ -759,6 +970,13 @@ async function loadObjMtl(objModelUrl, x, y, z, scaleX, scaleY, scaleZ) {
     if (objModelUrl == objfRod) {
       object.rotation.y = -Math.PI / 1.5;
     }
+    if (objModelUrl == objInitTent) {
+      object.rotation.z = Math.PI / 1.5;
+      object.rotation.x = -Math.PI / 2;
+    }
+    if (objModelUrl == objTent) {
+      object.rotation.y = -Math.PI / 1;
+    }
 
     // object.position.y += yPosition;
     if (y != 0) {
@@ -783,13 +1001,6 @@ async function loadObjMtl(objModelUrl, x, y, z, scaleX, scaleY, scaleZ) {
     onError(err);
   }
 }
-function animate() {
-  let now = Date.now();
-  let deltat = now - currentTime;
-  currentTime = now;
-  let fract = deltat / duration;
-  let angle = Math.PI * 2 * fract;
-}
 function update() {
   requestAnimationFrame(function () {
     update();
@@ -805,78 +1016,4 @@ function update() {
   // Update the camera controller
   orbitControls.update();
 }
-
-// function createScene(canvas) {
-//   // Create the Three.js renderer and attach it to our canvas
-//   renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-
-//   // Set the viewport size
-//   renderer.setSize(canvas.width, canvas.height);
-
-//   // Turn on shadows
-//   renderer.shadowMap.enabled = true;
-
-//   // Options are THREE.BasicShadowMap, THREE.PCFShadowMap, PCFSoftShadowMap
-//   renderer.shadowMap.type = THREE.BasicShadowMap;
-
-//   // Create a new Three.js scene
-//   scene = new THREE.Scene();
-
-//   // Add  a camera so we can view the scene
-//   camera = new THREE.PerspectiveCamera(
-//     45,
-//     canvas.width / canvas.height,
-//     5,
-//     4000
-//   );
-//   camera.position.set(-1050, 500, 15);
-//   scene.add(camera);
-
-//   orbitControls = new OrbitControls(camera, renderer.domElement);
-
-//   // Create a group to hold all the objects
-//   root = new THREE.Object3D();
-
-//   // Add a directional light to show off the object
-//   directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-
-//   // Create and add all the lights
-//   directionalLight.position.set(50, 50, 0.5);
-//   directionalLight.target.position.set(0, 0, 0);
-//   directionalLight.castShadow = true;
-//   root.add(directionalLight);
-
-//   spotLight = new THREE.SpotLight(0xaaaaaa);
-//   spotLight.position.set(0, 0, 0);
-//   spotLight.target.position.set(0, 0, 0);
-//   root.add(spotLight);
-
-//   spotLight.castShadow = true;
-
-//   spotLight.shadow.camera.near = 1;
-//   spotLight.shadow.camera.far = 200;
-//   spotLight.shadow.camera.fov = 45;
-
-//   spotLight.shadow.mapSize.width = SHADOW_MAP_WIDTH;
-//   spotLight.shadow.mapSize.height = SHADOW_MAP_HEIGHT;
-
-//   ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-//   root.add(ambientLight);
-
-//   // Create the objects
-//   // loadObjMtl(objModelUrl, objectList,yPosition,xPosition,zPosition,scaleX,scaleY,scaleZ)
-//   loadObjMtl(objPalmIsland, objectList, 1, 0, 0, 0.15, 0.15, 0.15);
-//   // loadObjMtl(objCarp, objectList, -13.5, -300, 0, 10, 10, 10);
-//   // loadObjMtl(objCampFire, objectList, 10, -150, 100, 10, 10, 10);
-//   // loadObjMtl(objTent, objectList, 8, -150, 0, 0.1, 0.1, 0.1);
-//   loadObjMtl(objLifeboat, objectList, 0, 0, 0, 0.5, 0.5, 0.5);
-//   // loadObjMtl(objPlane, objectList, 140, 0, -30, 0.1, 0.1, 0.1);
-//   // loadObjMtl(objPerson, objectList, 28, 0, -30, 1, 1, 1);
-//   // loadObjMtl(objfRod, objectList, 10, -30, 130, 1, 1, 1);
-//   // loadObjMtl(objbackpack, objectList, 10, -0, 130, 0.2, 0.2, 0.2);
-//   // loadObjMtl(objMan, objectList, 18, 0, -100, 0.1, 0.1, 0.1);
-
-//   scene.add(root);
-// }
-
 window.onload = () => main();

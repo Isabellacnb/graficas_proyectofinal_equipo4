@@ -50,12 +50,34 @@ body {
   margin: 30px;
 }
 
+#continueSceneTent {
+  position: absolute;
+  display: none;
+  margin: 30px;
+}
+
+#continueSceneSaved {
+  position: absolute;
+  display: none;
+  margin: 30px;
+}
+
 #rod {
   position: absolute;
   width: 73%;
   margin-top: 10%;
   height: 20%;
   margin-left: 27%;
+  display: none;
+}
+
+#logs {
+  position: absolute;
+  width: 40%;
+  margin-top: 35%;
+  height: 40%;
+  margin-left: 28%;
+  margin-right: 30%;
   display: none;
 }
 
@@ -67,6 +89,15 @@ body {
   margin-top: 25%;
 }
 
+#planeFly {
+  position: absolute;
+  width: 80%;
+  height: 25%;
+  margin-left: 20%;
+  margin-top: 7%;
+  display: none;
+}
+
 p {
   color: white;
   margin-top: 25px;
@@ -74,11 +105,11 @@ p {
   text-align: left;
   margin-left: 20px;
 
-  -webkit-animation: fadein 35s; /* Safari, Chrome and Opera > 12.1 */
-  -moz-animation: fadein 35s; /* Firefox < 16 */
-  -ms-animation: fadein 35s; /* Internet Explorer */
-  -o-animation: fadein 35s; /* Opera < 12.1 */
-  animation: fadein 35s;
+  -webkit-animation: fadein 15s; /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadein 15s; /* Firefox < 16 */
+  -ms-animation: fadein 15s; /* Internet Explorer */
+  -o-animation: fadein 15s; /* Opera < 12.1 */
+  animation: fadein 15s;
 }
 
 @keyframes fadein {
