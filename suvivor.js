@@ -2,6 +2,7 @@ import * as THREE from "./libs/three.js/r125/three.module.js";
 import { OrbitControls } from "./libs/three.js/r125/controls/OrbitControls.js";
 import { OBJLoader } from "./libs/three.js/r125/loaders/OBJLoader.js";
 import { MTLLoader } from "./libs/three.js/r125/loaders/MTLLoader.js";
+import { FBXLoader, FBXLOader } from "./libs/three.js/r125/loaders/FBXLoader.js";
 
 let renderer = null,
   scene = null,
@@ -328,6 +329,18 @@ function createBoatFloatScene() {
   loadObjMtl(objLifeboat, -38, -16, 38, 0.15, 0.15, 0.15);
   loadObjMtl(objCarp, -13, -5, 0, 3.5, 3.5, 3.5);
   loadObjMtl(objCarp, 18, -5, -20, 3, 3, 3);
+
+  const loader = new FBXLoader();
+
+  loader.load( './models/55-rp_nathan_animated_003_walking_fbx/rp_nathan_animated_003_walking_u3d.fbx', function ( object ) {
+
+    root.add( object );
+  
+  }, undefined, function ( error ) {
+  
+    console.error( error );
+  
+  } );
 
   root.add(group);
   root.add(fish);
