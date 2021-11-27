@@ -2,17 +2,17 @@ import * as THREE from "./libs/three.js/r125/three.module.js";
 import { OrbitControls } from "./libs/three.js/r125/controls/OrbitControls.js";
 import { OBJLoader } from "./libs/three.js/r125/loaders/OBJLoader.js";
 import { MTLLoader } from "./libs/three.js/r125/loaders/MTLLoader.js";
-import { FBXLoader} from "./libs/three.js/r125/loaders/FBXLoader.js";
+import { FBXLoader } from "./libs/three.js/r125/loaders/FBXLoader.js";
 
 let renderer = null,
   scene = null,
   camera = null,
   root = null,
   group = null,
+  manGroup = null,
   island = null,
   fish = null,
   waves = null,
-  sky = null,
   orbitControls = null;
 
 let duration = 10,
@@ -21,24 +21,18 @@ let duration = 10,
   waveAnimator = null,
   lightAnimator = null,
   waterAnimator = null,
-  skyAnimator = null,
   fishAnimator = null,
   rodAnimator = null,
   logsAnimator = null,
   planeAnimator = null,
+  manAnimator = null,
   cameraAnimator = null;
-
-let currentTime = Date.now();
 
 let directionalLight = null;
 let spotLight = null;
 let ambientLight = null;
 
-let SHADOW_MAP_WIDTH = 4096,
-  SHADOW_MAP_HEIGHT = 4096;
-
 const waterMapUrl = "../models/images/water_texture.jpg";
-const skyMapUrl = "../models/images/sky.jpg";
 
 let objPalmIsland = {
   obj: "models/palm_island/palm_island.obj",
@@ -48,10 +42,7 @@ let objCarp = {
   obj: "models/fish/Carp.obj",
   mtl: "models/fish/Carp.mtl",
 };
-let objCampFire = {
-  obj: "./models/campfire/camp_fire.obj",
-  mtl: "./models/campfire/camp_fire.mtl",
-};
+
 let objTent = {
   obj: "./models/tent/Basiccampingtents.obj",
   mtl: "./models/tent/Basiccampingtents.mtl",
@@ -64,21 +55,10 @@ let objPlane = {
   obj: "./models/plane/Plane.obj",
   mtl: "./models/plane/Plane.mtl",
 };
-let objPerson = {
-  obj: "./models/person/person2.obj",
-  mtl: "./models/person/person2.mtl",
-};
+
 let objfRod = {
   obj: "./models/FishingRod/fishingRod.obj",
   mtl: "./models/FishingRod/fishingRod.mtl",
-};
-let objbackpack = {
-  obj: "./models/backpack/Backpack.obj",
-  mtl: "./models/backpack/Backpack.mtl",
-};
-let objMan = {
-  obj: "./models/Man/Man.obj",
-  mtl: "./models/Man/Man.mtl",
 };
 
 let objInitTent = {
@@ -86,20 +66,15 @@ let objInitTent = {
   mtl: "./models/initTent/Firewood.mtl",
 };
 
-let objGirl = {
-
-  obj: "./models/Girl/dancer07.obj",
-  mtl: "./models/Girl/dancer07.mtl",
-};
-
 let isMovingMouse = false,
-  fishingTries = 0;
+  fishingTries = 0,
+  arrived = false;
 
 function main() {
   // play audio
-  var audio = new Audio("ocean2.mp3");
-  audio.volume = 0.5;
-  audio.play();
+  // var audio = new Audio("ocean2.mp3");
+  // audio.volume = 0.5;
+  // audio.play();
 
   const canvas = document.getElementById("webglcanvas");
   let startButton = document.getElementById("start");
@@ -119,8 +94,8 @@ function main() {
 
   startButton.onclick = () => {
     title.innerHTML = "";
-    createBoatFloatScene();
     playCameraAnimationTitle();
+    createBoatFloatScene();
     playBoatFloatSceneAnimations();
     group.addEventListener("click", function () {
       playFishFlyAnimation;
@@ -147,7 +122,7 @@ function main() {
     isMovingMouse = true;
   });
 
-  planeFlyDiv.addEventListener("mousemove", () => {
+  planeFlyDiv.addEventListener("mousemove", (e) => {
     if (isMovingMouse) {
       playPlaneFlyAnimations();
       isMovingMouse = false;
@@ -155,40 +130,63 @@ function main() {
     }
   });
 
-  continueSceneBoat.onclick = () => {
-    playTransitionToHelp();
-    continueSceneBoat.style.display = "none";
-    continueSceneHelp.style.display = "block";
-    waterDiv.style.display = "none";
-  };
+  continueSceneBoat.addEventListener("mousedown", () => {
+    isMovingMouse = true;
+  });
+  continueSceneBoat.addEventListener("mousemove", (e) => {
+    if (isMovingMouse) {
+      isMovingMouse = false;
+      playTransitionToHelp();
+      continueSceneBoat.style.display = "none";
+      continueSceneHelp.style.display = "block";
+      waterDiv.style.display = "none";
+    }
+  });
 
-  continueSceneHelp.onclick = () => {
-    playTransitionToFishing();
-    continueSceneHelp.style.display = "none";
-    createFishingScene();
-    rodDiv.style.display = "block";
-    waterDiv.style.width = "70%";
-    waterDiv.style.height = "60%";
-    waterDiv.style.marginTop = "30%";
-    waterDiv.style.display = "block";
-    continueSceneTent.style.display = "block";
-  };
+  continueSceneHelp.addEventListener("mousedown", () => {
+    isMovingMouse = true;
+  });
+  continueSceneHelp.addEventListener("mousemove", (e) => {
+    if (isMovingMouse) {
+      isMovingMouse = false;
+      playTransitionToFishing();
+      continueSceneHelp.style.display = "none";
+      createFishingScene();
+      rodDiv.style.display = "block";
+      waterDiv.style.width = "70%";
+      waterDiv.style.height = "60%";
+      waterDiv.style.marginTop = "30%";
+      waterDiv.style.display = "block";
+    }
+  });
 
-  continueSceneTent.onclick = () => {
-    createTentScene();
-    playTransitionToTent();
-    waterDiv.style.display = "none";
-    rodDiv.style.display = "none";
-    logsDiv.style.display = "block";
-    continueSceneTent.style.display = "none";
-    continueSceneSaved.style.display = "block";
-  };
+  continueSceneTent.addEventListener("mousedown", () => {
+    isMovingMouse = true;
+  });
+  continueSceneTent.addEventListener("mousemove", (e) => {
+    if (isMovingMouse) {
+      isMovingMouse = false;
+      createTentScene();
+      playTransitionToTent();
+      waterDiv.style.display = "none";
+      logsDiv.style.display = "block";
+      continueSceneTent.style.display = "none";
+      continueSceneSaved.style.display = "block";
+    }
+  });
 
-  continueSceneSaved.onclick = () => {
-    playTransitionToSaved();
-    continueSceneSaved.style.display = "none";
-    planeFlyDiv.style.display = "block";
-  };
+  continueSceneSaved.addEventListener("mousedown", () => {
+    isMovingMouse = true;
+  });
+  continueSceneSaved.addEventListener("mousemove", (e) => {
+    if (isMovingMouse) {
+      isMovingMouse = false;
+      playTransitionToSaved();
+      logsDiv.style.display = "block";
+      continueSceneSaved.style.display = "none";
+      planeFlyDiv.style.display = "block";
+    }
+  });
 
   waterDiv.onclick = () => {
     if (fish) {
@@ -203,6 +201,8 @@ function main() {
     }
     if (fishingTries > 2) {
       playFishedAnimation();
+      rodDiv.style.display = "none";
+      continueSceneTent.style.display = "block";
     }
   };
 
@@ -241,10 +241,6 @@ function createMainTitleScene(canvas) {
   );
   camera.position.set(0, 50, 1000);
 
-  // scene.background = new THREE.CubeTextureLoader()
-  //   .setPath("./models/skyboxsun25deg")
-  //   .load(["px.png", "nx.png", "py.png", "ny.png", "pz.png", "nz.png"]);
-
   orbitControls = new OrbitControls(camera, renderer.domElement);
 
   // Create a group to hold all the objects
@@ -259,42 +255,59 @@ function createMainTitleScene(canvas) {
 
   ambientLight = new THREE.AmbientLight(0x888888);
   root.add(ambientLight);
-//sky map
+  //sky map
   let materialArray = [];
-let texture_ft = new THREE.TextureLoader().load( './models/skyboxsun25deg/nx.jpg');
-let texture_bk = new THREE.TextureLoader().load( './models/skyboxsun25deg/px.jpg');
-let texture_up = new THREE.TextureLoader().load( './models/skyboxsun25deg/py.jpg');
-let texture_dn = new THREE.TextureLoader().load( './models/skyboxsun25deg/ny.jpg');
-let texture_rt = new THREE.TextureLoader().load( './models/skyboxsun25deg/nz.jpg');
-let texture_lf = new THREE.TextureLoader().load( './models/skyboxsun25deg/pz.jpg');
-  
-materialArray.push(new THREE.MeshBasicMaterial( { map: texture_ft }));
-materialArray.push(new THREE.MeshBasicMaterial( { map: texture_bk }));
-materialArray.push(new THREE.MeshBasicMaterial( { map: texture_up }));
-materialArray.push(new THREE.MeshBasicMaterial( { map: texture_dn }));
-materialArray.push(new THREE.MeshBasicMaterial( { map: texture_rt }));
-materialArray.push(new THREE.MeshBasicMaterial( { map: texture_lf }));
-   
-for (let i = 0; i < 6; i++)
-  materialArray[i].side = THREE.BackSide;
-   
-let skyboxGeo = new THREE.BoxGeometry( 5000, 5000, 5000);
-let sky = new THREE.Mesh( skyboxGeo, materialArray );
-
- /* let skyMap = new THREE.TextureLoader().load(skyMapUrl);
-  skyMap.wrapS = skyMap.wrapT = THREE.RepeatWrapping;
-
-  const skyGeometry = new THREE.SphereGeometry(1000, 50, 50);
-  sky = new THREE.Mesh(
-    skyGeometry,
-    new THREE.MeshPhongMaterial({ map: skyMap, side: THREE.DoubleSide })
+  let texture_ft = new THREE.TextureLoader().load(
+    "./models/skyboxsun25deg/nx.jpg"
   );
-  sky.position.set(0, 0, -500);*/
+  let texture_bk = new THREE.TextureLoader().load(
+    "./models/skyboxsun25deg/px.jpg"
+  );
+  let texture_up = new THREE.TextureLoader().load(
+    "./models/skyboxsun25deg/py.jpg"
+  );
+  let texture_dn = new THREE.TextureLoader().load(
+    "./models/skyboxsun25deg/ny.jpg"
+  );
+  let texture_rt = new THREE.TextureLoader().load(
+    "./models/skyboxsun25deg/nz.jpg"
+  );
+  let texture_lf = new THREE.TextureLoader().load(
+    "./models/skyboxsun25deg/pz.jpg"
+  );
 
-  
+  materialArray.push(new THREE.MeshBasicMaterial({ map: texture_ft }));
+  materialArray.push(new THREE.MeshBasicMaterial({ map: texture_bk }));
+  materialArray.push(new THREE.MeshBasicMaterial({ map: texture_up }));
+  materialArray.push(new THREE.MeshBasicMaterial({ map: texture_dn }));
+  materialArray.push(new THREE.MeshBasicMaterial({ map: texture_rt }));
+  materialArray.push(new THREE.MeshBasicMaterial({ map: texture_lf }));
+
+  for (let i = 0; i < 6; i++) materialArray[i].side = THREE.BackSide;
+
+  let skyboxGeo = new THREE.BoxGeometry(5000, 5000, 5000);
+  let sky = new THREE.Mesh(skyboxGeo, materialArray);
+
   root.add(sky);
   // Nos add group to our scene
   scene.add(root);
+  // Create a texture map
+  let waterMap = new THREE.TextureLoader().load(waterMapUrl);
+  waterMap.wrapS = waterMap.wrapT = THREE.RepeatWrapping;
+  waterMap.repeat.set(4, 4);
+
+  // Put in a ground plane to show off the lighting
+  const floorGeometry = new THREE.PlaneGeometry(2000, 2000, 50, 50);
+  waves = new THREE.Mesh(
+    floorGeometry,
+    new THREE.MeshPhongMaterial({ map: waterMap, side: THREE.DoubleSide })
+  );
+  waves.rotation.x = -Math.PI / 2;
+  waves.position.y = -1.02;
+
+  // Add the waves to our group
+  root.add(waves);
+  playWaterAnimations();
 }
 /*function playSkyAnimation() {
   // sky animation
@@ -338,84 +351,35 @@ function createBoatFloatScene() {
   // Create a group to hold the objects
   group = new THREE.Object3D();
   fish = new THREE.Object3D();
+  manGroup = new THREE.Object3D();
 
-  // Create a texture map
-  let waterMap = new THREE.TextureLoader().load(waterMapUrl);
-  waterMap.wrapS = waterMap.wrapT = THREE.RepeatWrapping;
-  waterMap.repeat.set(4, 4);
-
-  // Put in a ground plane to show off the lighting
-  const floorGeometry = new THREE.PlaneGeometry(900, 900, 50, 50);
-  waves = new THREE.Mesh(
-    floorGeometry,
-    new THREE.MeshPhongMaterial({ map: waterMap, side: THREE.DoubleSide })
-  );
-  waves.rotation.x = -Math.PI / 2;
-  waves.position.y = -1.02;
-
-  // Add the waves to our group
-  root.add(waves);
+  // Add lifeboat and fishes
   loadObjMtl(objLifeboat, -38, -16, 43, 0.15, 0.15, 0.15);
   loadObjMtl(objCarp, -13, -5, 0, 3.5, 3.5, 3.5);
   loadObjMtl(objCarp, 18, -5, -20, 3, 3, 3);
-  
 
   const loader = new FBXLoader();
 
-  loader.load( './models/55-rp_nathan_animated_003_walking_fbx/rp_nathan_animated_003_walking.fbx', function ( object ) {
-    object.scale.set(.05,.05,.05);
-     object.rotation.y = Math.PI / 2
-   
-	group.add( object );
+  loader.load(
+    "./models/55-rp_nathan_animated_003_walking_fbx/rp_nathan_animated_003_walking.fbx",
+    function (object) {
+      object.scale.set(0.05, 0.05, 0.05);
+      object.rotation.y = Math.PI / 2.3;
+      object.position.set(-1, -4, -1);
 
-}, undefined, function ( error ) {
-
-	console.error( error );
-
-} );
+      manGroup.add(object);
+    },
+    undefined,
+    function (error) {
+      console.error(error);
+    }
+  );
+  group.add(manGroup);
 
   root.add(group);
   root.add(fish);
 }
-function playBoatFloatSceneAnimations() {
-  // position animation
-  group.position.set(0, 0, 0);
-  group.rotation.set(0, 0, 0);
-
-  boatAnimator = new KF.KeyFrameAnimator();
-  boatAnimator.init({
-    interps: [
-      {
-        keys: [0, 0.2, 0.25, 0.375, 0.5, 0.9, 1],
-        values: [
-          { x: 0, y: 0, z: 0 },
-          { x: 0.5, y: 0, z: 0.5 },
-          { x: 0, y: 0, z: 0 },
-          { x: 0.25, y: 0.25, z: 0.25 },
-          { x: 1, y: 1, z: 1 },
-          { x: 0.25, y: 0.25, z: 0.25 },
-          { x: 0, y: 0, z: 0 },
-        ],
-        target: group.position,
-      },
-      {
-        keys: [0, 0.25, 0.5, 0.75, 1],
-        values: [
-          { x: 0, z: 0 },
-          { x: Math.PI / 12, z: Math.PI / 12 },
-          { x: 0, z: Math.PI / 12 },
-          { x: -Math.PI / 12, z: -Math.PI / 12 },
-          { x: 0, z: 0 },
-        ],
-        target: group.rotation,
-      },
-    ],
-    loop: true,
-    duration: duration * 1000,
-    easing: TWEEN.Easing.Bounce.InOut,
-  });
-  boatAnimator.start();
-
+function playWaterAnimations() {
   // rotation animation
   waves.rotation.set(-Math.PI / 2, 0, 0);
   waveAnimator = new KF.KeyFrameAnimator();
@@ -477,6 +441,45 @@ function playBoatFloatSceneAnimations() {
     easing: TWEEN.Easing.Sinusoidal.In,
   });
   waterAnimator.start();
+}
+function playBoatFloatSceneAnimations() {
+  // position animation
+  group.position.set(0, 0, 0);
+  group.rotation.set(0, 0, 0);
+
+  boatAnimator = new KF.KeyFrameAnimator();
+  boatAnimator.init({
+    interps: [
+      {
+        keys: [0, 0.2, 0.25, 0.375, 0.5, 0.9, 1],
+        values: [
+          { x: 0, y: 0, z: 0 },
+          { x: 0.5, y: 0, z: 0.5 },
+          { x: 0, y: 0, z: 0 },
+          { x: 0.25, y: 0.25, z: 0.25 },
+          { x: 1, y: 1, z: 1 },
+          { x: 0.25, y: 0.25, z: 0.25 },
+          { x: 0, y: 0, z: 0 },
+        ],
+        target: group.position,
+      },
+      {
+        keys: [0, 0.25, 0.5, 0.75, 1],
+        values: [
+          { x: 0, z: 0 },
+          { x: Math.PI / 12, z: Math.PI / 12 },
+          { x: 0, z: Math.PI / 12 },
+          { x: -Math.PI / 12, z: -Math.PI / 12 },
+          { x: 0, z: 0 },
+        ],
+        target: group.rotation,
+      },
+    ],
+    loop: true,
+    duration: duration * 1000,
+    easing: TWEEN.Easing.Bounce.InOut,
+  });
+  boatAnimator.start();
 }
 function playFishFlyAnimation() {
   // fish animation
@@ -649,7 +652,36 @@ function playTransitionToHelp() {
   });
   cameraAnimator.start();
 
-  group.clear();
+  manAnimator = new KF.KeyFrameAnimator();
+  manAnimator.init({
+    interps: [
+      {
+        keys: [0, 1],
+        values: [
+          { x: 0, y: 0, z: 0 },
+          { x: 45, y: 26, z: 0 },
+        ],
+        target: manGroup.position,
+      },
+      {
+        keys: [0, 0.25, 0.5, 0.75, 1],
+        values: [
+          { x: 0, y: 0, z: 0 },
+          { x: 0.5, y: 0, z: 0 },
+          { x: 0, y: 0, z: 0 },
+          { x: -0.5, y: 0, z: 0 },
+          { x: 0, y: 0, z: 0 },
+        ],
+        target: manGroup.rotation,
+      },
+    ],
+    loop: false,
+    duration: duration * 600,
+    easing: TWEEN.Easing.Linear.None,
+  });
+  manAnimator.start();
+
+  // group.clear();
   fish.clear();
 }
 function playTransitionToFishing() {
@@ -855,7 +887,7 @@ function playTransitionToTent() {
   fish.clear();
 }
 function createTentScene() {
-  loadObjMtl(objInitTent, 60, 8, 0, 0.1, 0.1, 0.1);
+  loadObjMtl(objInitTent, 80, 8, 0, 0.1, 0.1, 0.1);
   root.add(group);
 }
 function playLogsAnimations() {
@@ -937,12 +969,12 @@ function playTransitionToSaved() {
     easing: TWEEN.Easing.Circular.Out,
   });
   cameraAnimator.start();
-
   group.clear();
+  manGroup.position.set(0, 0, 0);
+  root.add(manGroup);
 }
 function playPlaneFlyAnimations() {
   loadObjMtl(objPlane, 270, 0, 2, 0.2, 0.2, 0.2);
-
 
   group.position.set(0, 0, 0);
   group.rotation.set(0, 0, 0);
@@ -966,7 +998,28 @@ function playPlaneFlyAnimations() {
     easing: TWEEN.Easing.Linear.None,
   });
   planeAnimator.start();
+  console.log(manGroup.position);
+  manAnimator.init({
+    interps: [
+      {
+        keys: [0, 0.25, 0.5, 0.75, 1],
+        values: [
+          { x: 40, y: 20, z: 10 },
+          { x: 30, y: 20, z: 10 },
+          { x: 30, y: 20, z: 10 },
+          { x: 30, y: 20, z: 10 },
+          { x: -150, y: -200, z: -470 },
+        ],
+        target: manGroup.position,
+      },
+    ],
+    loop: false,
+    duration: duration * 500,
+    easing: TWEEN.Easing.Linear.None,
+  });
+  manAnimator.start();
 }
+
 // Helper Functions
 function onError(err) {
   console.error(err);
