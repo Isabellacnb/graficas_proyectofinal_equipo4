@@ -2,7 +2,7 @@ import * as THREE from "./libs/three.js/r125/three.module.js";
 import { OrbitControls } from "./libs/three.js/r125/controls/OrbitControls.js";
 import { OBJLoader } from "./libs/three.js/r125/loaders/OBJLoader.js";
 import { MTLLoader } from "./libs/three.js/r125/loaders/MTLLoader.js";
-import { FBXLoader, FBXLOader } from "./libs/three.js/r125/loaders/FBXLoader.js";
+import { FBXLoader} from "./libs/three.js/r125/loaders/FBXLoader.js";
 
 let renderer = null,
   scene = null,
@@ -86,6 +86,12 @@ let objInitTent = {
   mtl: "./models/initTent/Firewood.mtl",
 };
 
+let objGirl = {
+
+  obj: "./models/Girl/dancer07.obj",
+  mtl: "./models/Girl/dancer07.mtl",
+};
+
 let isMovingMouse = false,
   fishingTries = 0;
 
@@ -109,7 +115,7 @@ function main() {
   let planeFlyDiv = document.getElementById("planeFly");
 
   createMainTitleScene(canvas);
-  playSkyAnimation();
+  //playSkyAnimation();
 
   startButton.onclick = () => {
     title.innerHTML = "";
@@ -253,8 +259,29 @@ function createMainTitleScene(canvas) {
 
   ambientLight = new THREE.AmbientLight(0x888888);
   root.add(ambientLight);
+//sky map
+  let materialArray = [];
+let texture_ft = new THREE.TextureLoader().load( './models/skyboxsun25deg/nx.jpg');
+let texture_bk = new THREE.TextureLoader().load( './models/skyboxsun25deg/px.jpg');
+let texture_up = new THREE.TextureLoader().load( './models/skyboxsun25deg/py.jpg');
+let texture_dn = new THREE.TextureLoader().load( './models/skyboxsun25deg/ny.jpg');
+let texture_rt = new THREE.TextureLoader().load( './models/skyboxsun25deg/nz.jpg');
+let texture_lf = new THREE.TextureLoader().load( './models/skyboxsun25deg/pz.jpg');
+  
+materialArray.push(new THREE.MeshBasicMaterial( { map: texture_ft }));
+materialArray.push(new THREE.MeshBasicMaterial( { map: texture_bk }));
+materialArray.push(new THREE.MeshBasicMaterial( { map: texture_up }));
+materialArray.push(new THREE.MeshBasicMaterial( { map: texture_dn }));
+materialArray.push(new THREE.MeshBasicMaterial( { map: texture_rt }));
+materialArray.push(new THREE.MeshBasicMaterial( { map: texture_lf }));
+   
+for (let i = 0; i < 6; i++)
+  materialArray[i].side = THREE.BackSide;
+   
+let skyboxGeo = new THREE.BoxGeometry( 5000, 5000, 5000);
+let sky = new THREE.Mesh( skyboxGeo, materialArray );
 
-  let skyMap = new THREE.TextureLoader().load(skyMapUrl);
+ /* let skyMap = new THREE.TextureLoader().load(skyMapUrl);
   skyMap.wrapS = skyMap.wrapT = THREE.RepeatWrapping;
 
   const skyGeometry = new THREE.SphereGeometry(1000, 50, 50);
@@ -262,12 +289,14 @@ function createMainTitleScene(canvas) {
     skyGeometry,
     new THREE.MeshPhongMaterial({ map: skyMap, side: THREE.DoubleSide })
   );
-  sky.position.set(0, 0, -500);
+  sky.position.set(0, 0, -500);*/
+
+  
   root.add(sky);
   // Nos add group to our scene
   scene.add(root);
 }
-function playSkyAnimation() {
+/*function playSkyAnimation() {
   // sky animation
   skyAnimator = new KF.KeyFrameAnimator();
   skyAnimator.init({
@@ -286,7 +315,7 @@ function playSkyAnimation() {
     easing: TWEEN.Easing.Sinusoidal.In,
   });
   skyAnimator.start();
-}
+}*/
 function playCameraAnimationTitle() {
   // camera animation zoom
   cameraAnimator = new KF.KeyFrameAnimator();
@@ -326,21 +355,24 @@ function createBoatFloatScene() {
 
   // Add the waves to our group
   root.add(waves);
-  loadObjMtl(objLifeboat, -38, -16, 38, 0.15, 0.15, 0.15);
+  loadObjMtl(objLifeboat, -38, -16, 43, 0.15, 0.15, 0.15);
   loadObjMtl(objCarp, -13, -5, 0, 3.5, 3.5, 3.5);
   loadObjMtl(objCarp, 18, -5, -20, 3, 3, 3);
+  
 
   const loader = new FBXLoader();
 
-  loader.load( './models/55-rp_nathan_animated_003_walking_fbx/rp_nathan_animated_003_walking_u3d.fbx', function ( object ) {
+  loader.load( './models/55-rp_nathan_animated_003_walking_fbx/rp_nathan_animated_003_walking.fbx', function ( object ) {
+    object.scale.set(.05,.05,.05);
+     object.rotation.y = Math.PI / 2
+   
+	group.add( object );
 
-    root.add( object );
-  
-  }, undefined, function ( error ) {
-  
-    console.error( error );
-  
-  } );
+}, undefined, function ( error ) {
+
+	console.error( error );
+
+} );
 
   root.add(group);
   root.add(fish);
@@ -910,6 +942,8 @@ function playTransitionToSaved() {
 }
 function playPlaneFlyAnimations() {
   loadObjMtl(objPlane, 270, 0, 2, 0.2, 0.2, 0.2);
+
+
   group.position.set(0, 0, 0);
   group.rotation.set(0, 0, 0);
   planeAnimator = new KF.KeyFrameAnimator();
