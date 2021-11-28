@@ -1141,7 +1141,7 @@ async function loadObjMtl(objModelUrl, x, y, z, scaleX, scaleY, scaleZ) {
       if (child.isMesh) {
         child.castShadow = true;
         child.receiveShadow = true;
-        child.geometry.computeVertexNormals();
+      
       }
     });
 
