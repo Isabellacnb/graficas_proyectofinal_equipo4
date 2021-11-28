@@ -831,13 +831,13 @@ function playFishedAnimation() {
           { x: -10, y: -54, z: 0 },
           { x: -10, y: -44, z: 0 },
           { x: 0, y: 0, z: 0 },
-          { x: 70, y: 70, z: 0 },
+          { x: 0, y:0, z: 0 },
         ],
         target: fish.position,
       },
     ],
     loop: false,
-    duration: duration * 200,
+    duration: duration * 400,
     easing: TWEEN.Easing.Bounce.In,
   });
   fishAnimator.start();
@@ -978,7 +978,7 @@ function playTransitionToSaved() {
   });
   cameraAnimator.start();
   group.clear();
-  manGroup.position.set(0, 0, 0);
+  manGroup.position.set(40, 20, 10);
   root.add(manGroup);
 }
 function playPlaneFlyAnimations() {
@@ -993,9 +993,9 @@ function playPlaneFlyAnimations() {
         keys: [0, 0.45, 0.5, 0.55, 1],
         values: [
           { x: -150, y: 200, z: 420 },
-          { x: -150, y: 50, z: 0 },
-          { x: -150, y: 50, z: 0 },
-          { x: -150, y: 50, z: 0 },
+          { x: -150, y: 50, z: 30 },
+          { x: -150, y: 50, z: 30 },
+          { x: -150, y: 50, z: 30 },
           { x: -150, y: 200, z: -470 },
         ],
         target: group.position,
@@ -1012,10 +1012,10 @@ function playPlaneFlyAnimations() {
         keys: [0, 0.25, 0.5, 0.75, 1],
         values: [
           { x: 40, y: 20, z: 10 },
-          { x: 30, y: 20, z: 10 },
-          { x: 30, y: 20, z: 10 },
-          { x: 30, y: 20, z: 10 },
-          { x: -150, y: -200, z: -470 },
+          { x: 100, y: 20, z: 10 },
+          { x: 140, y: 25, z: 10 },
+          { x: -1300, y: -1130, z: -1115 },
+          { x: -1000, y: -1110, z: -1110 },
         ],
         target: manGroup.position,
       },
@@ -1141,6 +1141,7 @@ async function loadObjMtl(objModelUrl, x, y, z, scaleX, scaleY, scaleZ) {
       if (child.isMesh) {
         child.castShadow = true;
         child.receiveShadow = true;
+        child.geometry.computeVertexNormals();
       }
     });
 
