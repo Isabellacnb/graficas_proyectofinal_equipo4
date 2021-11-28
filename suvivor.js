@@ -557,6 +557,7 @@ function playBoatArriveAnimations() {
       },
     ],
     loop: false,
+    duration: duration * 300,
     easing: TWEEN.Easing.Linear.None,
   });
   islandAnimator.start();
