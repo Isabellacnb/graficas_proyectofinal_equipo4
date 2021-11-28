@@ -293,7 +293,7 @@ function createMainTitleScene(canvas) {
 
   for (let i = 0; i < 6; i++) materialArray[i].side = THREE.BackSide;
 
-  let skyboxGeo = new THREE.BoxGeometry(5000, 5000, 5000);
+  let skyboxGeo = new THREE.BoxGeometry(3000, 3000, 3000);
   let sky = new THREE.Mesh(skyboxGeo, materialArray);
 
   root.add(sky);
@@ -557,7 +557,6 @@ function playBoatArriveAnimations() {
       },
     ],
     loop: false,
-    duration: duration * 100,
     easing: TWEEN.Easing.Linear.None,
   });
   islandAnimator.start();
@@ -853,7 +852,7 @@ function playTransitionToTent() {
           { r: 0.1, g: 0.1, b: 0.1 },
           { r: 0, g: 0, b: 0 },
           { r: 0.1, g: 0.1, b: 0.1 },
-          { r: 1, g: 1, b: 1 },
+          { r: 0.75, g: 0.75, b: 0.75 },
         ],
         target: directionalLight.color,
       },
@@ -864,7 +863,7 @@ function playTransitionToTent() {
           { r: 0.5, g: 0.5, b: 0.5 },
           { r: 0, g: 0, b: 0 },
           { r: 0.5, g: 0.5, b: 0.5 },
-          { r: 0.8, g: 0.8, b: 0.8 },
+          { r: 1, g: 1, b: 1},
         ],
         target: ambientLight.color,
       },
