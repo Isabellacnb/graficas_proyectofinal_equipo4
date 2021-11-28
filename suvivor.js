@@ -67,8 +67,7 @@ let objInitTent = {
 };
 
 let isMovingMouse = false,
-  fishingTries = 0,
-  arrived = false;
+  fishingTries = 0;
 
 function main() {
   // play audio
@@ -88,6 +87,8 @@ function main() {
   let rodDiv = document.getElementById("rod");
   let logsDiv = document.getElementById("logs");
   let planeFlyDiv = document.getElementById("planeFly");
+  let clickHereButton = document.getElementById("circle-button");
+  let endDiv = document.getElementById("end");
 
   createMainTitleScene(canvas);
   //playSkyAnimation();
@@ -126,7 +127,8 @@ function main() {
     if (isMovingMouse) {
       playPlaneFlyAnimations();
       isMovingMouse = false;
-      planeFlyDiv.style.displey = "none";
+      planeFlyDiv.style.display = "none";
+      clickHereButton.style.display = "block";
     }
   });
 
@@ -182,7 +184,7 @@ function main() {
     if (isMovingMouse) {
       isMovingMouse = false;
       playTransitionToSaved();
-      logsDiv.style.display = "block";
+      logsDiv.style.display = "none";
       continueSceneSaved.style.display = "none";
       planeFlyDiv.style.display = "block";
     }
@@ -212,6 +214,12 @@ function main() {
       playLogsAnimations();
       setTimeout(buildTent(), 6000);
     }
+  };
+
+  clickHereButton.onclick = () => {
+    playTransitionToEnd();
+    clickHereButton.style.display = "none";
+    endDiv.style.display = "block";
   };
 
   update();
@@ -998,7 +1006,6 @@ function playPlaneFlyAnimations() {
     easing: TWEEN.Easing.Linear.None,
   });
   planeAnimator.start();
-  console.log(manGroup.position);
   manAnimator.init({
     interps: [
       {
@@ -1018,6 +1025,82 @@ function playPlaneFlyAnimations() {
     easing: TWEEN.Easing.Linear.None,
   });
   manAnimator.start();
+}
+
+function playTransitionToEnd() {
+  // color animation
+  lightAnimator.init({
+    interps: [
+      {
+        keys: [0, 0.4, 0.6, 0.8, 1],
+        values: [
+          { r: 1, g: 1, b: 1 },
+          { r: 0.1, g: 0.1, b: 0.1 },
+          { r: 0, g: 0, b: 0 },
+          { r: 0.1, g: 0.1, b: 0.1 },
+          { r: 1, g: 1, b: 1 },
+        ],
+        target: directionalLight.color,
+      },
+      {
+        keys: [0, 0.4, 0.6, 0.8, 1],
+        values: [
+          { r: 1, g: 1, b: 1 },
+          { r: 0.5, g: 0.5, b: 0.5 },
+          { r: 0, g: 0, b: 0 },
+          { r: 0.5, g: 0.5, b: 0.5 },
+          { r: 0.8, g: 0.8, b: 0.8 },
+        ],
+        target: ambientLight.color,
+      },
+    ],
+    loop: false,
+    duration: duration * 100,
+    easing: TWEEN.Easing.Circular.Out,
+  });
+  lightAnimator.start();
+  cameraAnimator.init({
+    interps: [
+      {
+        keys: [0, 1],
+        values: [
+          { x: -280, y: 15, z: -100 },
+          { x: 180, y: 35, z: 150 },
+        ],
+        target: camera.position,
+      },
+    ],
+    loop: false,
+    duration: duration * 100,
+    easing: TWEEN.Easing.Circular.Out,
+  });
+  cameraAnimator.start();
+  group.clear();
+
+  // add plane to scene
+  loadObjMtl(objPlane, 270, 0, 2, 0.2, 0.2, 0.2);
+
+  group.position.set(0, 0, 0);
+  group.rotation.set(0, 0, 0);
+  planeAnimator.init({
+    interps: [
+      {
+        keys: [0, 0.25, 0.5, 0.75, 1],
+        values: [
+          { x: -1600, y: 200, z: 0 },
+          { x: -1500, y: 200, z: -600 },
+          { x: -1400, y: 200, z: -1200 },
+          { x: -1300, y: 200, z: -1800 },
+          { x: -1200, y: 200, z: -2450 },
+        ],
+        target: group.position,
+      },
+    ],
+    loop: false,
+    duration: duration * 1000,
+    easing: TWEEN.Easing.Linear.None,
+  });
+  planeAnimator.start();
 }
 
 // Helper Functions

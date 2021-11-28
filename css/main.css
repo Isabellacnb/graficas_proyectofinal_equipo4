@@ -101,6 +101,34 @@ body {
   display: none;
 }
 
+#circle-button {
+  margin-top: 50%;
+  margin-left: 45%;
+  background-color: white;
+  opacity: 0.5;
+  position: absolute;
+  font-size: 14px;
+  text-align: center;
+  border: none;
+  border-radius: 50%;
+  height: 10%;
+  width: 8%;
+  display: none;
+}
+
+#end {
+  position: absolute;
+  width: 100%;
+  color: white;
+  margin-top: 23%;
+  font-weight: bolder;
+  font-size: 40px;
+  text-align: center;
+  z-index: 100;
+  text-shadow: 1px 1px 2px gray;
+  display: none;
+}
+
 p {
   color: white;
   margin-top: 25px;
