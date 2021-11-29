@@ -70,12 +70,6 @@ let isMovingMouse = false,
   fishingTries = 0;
 
 function main() {
-  // play audio
-  var audio = new Audio("ocean2.mp3");
-  audio.volume = 0.5;
-  audio.autoplay = true;
-  audio.load();
-
   const canvas = document.getElementById("webglcanvas");
   let startButton = document.getElementById("start");
   let title = document.getElementById("title");
@@ -1072,6 +1066,7 @@ function playTransitionToEnd() {
     easing: TWEEN.Easing.Linear.None,
   });
   planeAnimator.start();
+  manGroup.clear();
 }
 
 // Helper Functions
