@@ -71,9 +71,10 @@ let isMovingMouse = false,
 
 function main() {
   // play audio
-  // var audio = new Audio("ocean2.mp3");
-  // audio.volume = 0.5;
-  // audio.play();
+  var audio = new Audio("ocean2.mp3");
+  audio.volume = 0.5;
+  audio.autoplay = true;
+  audio.load();
 
   const canvas = document.getElementById("webglcanvas");
   let startButton = document.getElementById("start");
@@ -91,8 +92,6 @@ function main() {
   let endDiv = document.getElementById("end");
 
   createMainTitleScene(canvas);
-  //playSkyAnimation();
-
   startButton.onclick = () => {
     title.innerHTML = "";
     playCameraAnimationTitle();
@@ -104,11 +103,9 @@ function main() {
     sceneBoatFloat.style.display = "block";
     waterDiv.style.display = "block";
   };
-
   sceneBoatFloat.addEventListener("mousedown", (e) => {
     isMovingMouse = true;
   });
-
   sceneBoatFloat.addEventListener("mousemove", (e) => {
     if (isMovingMouse) {
       playBoatArriveScene();
@@ -118,11 +115,9 @@ function main() {
       continueSceneBoat.style.display = "block";
     }
   });
-
   planeFlyDiv.addEventListener("mousedown", (e) => {
     isMovingMouse = true;
   });
-
   planeFlyDiv.addEventListener("mousemove", (e) => {
     if (isMovingMouse) {
       playPlaneFlyAnimations();
@@ -131,7 +126,6 @@ function main() {
       clickHereButton.style.display = "block";
     }
   });
-
   continueSceneBoat.addEventListener("mousedown", () => {
     isMovingMouse = true;
   });
@@ -144,7 +138,6 @@ function main() {
       waterDiv.style.display = "none";
     }
   });
-
   continueSceneHelp.addEventListener("mousedown", () => {
     isMovingMouse = true;
   });
@@ -161,7 +154,6 @@ function main() {
       waterDiv.style.display = "block";
     }
   });
-
   continueSceneTent.addEventListener("mousedown", () => {
     isMovingMouse = true;
   });
@@ -176,7 +168,6 @@ function main() {
       continueSceneSaved.style.display = "block";
     }
   });
-
   continueSceneSaved.addEventListener("mousedown", () => {
     isMovingMouse = true;
   });
@@ -189,13 +180,11 @@ function main() {
       planeFlyDiv.style.display = "block";
     }
   });
-
   waterDiv.onclick = () => {
     if (fish) {
       playFishFlyAnimation();
     }
   };
-
   rodDiv.onclick = () => {
     if (group) {
       playFishingAnimations();
@@ -207,7 +196,6 @@ function main() {
       continueSceneTent.style.display = "block";
     }
   };
-
   logsDiv.ondblclick = () => {
     if (group) {
       logsDiv.style.display = "none";
@@ -215,13 +203,11 @@ function main() {
       setTimeout(buildTent(), 6000);
     }
   };
-
   clickHereButton.onclick = () => {
     playTransitionToEnd();
     clickHereButton.style.display = "none";
     endDiv.style.display = "block";
   };
-
   update();
 }
 function createMainTitleScene(canvas) {
@@ -255,7 +241,7 @@ function createMainTitleScene(canvas) {
   root = new THREE.Object3D();
 
   // Add a directional light to show off the object
-  directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+  directionalLight = new THREE.DirectionalLight(0x888888, 0.7);
 
   // Create and add all the lights
   directionalLight.position.set(0, 1, 2);
@@ -317,26 +303,6 @@ function createMainTitleScene(canvas) {
   root.add(waves);
   playWaterAnimations();
 }
-/*function playSkyAnimation() {
-  // sky animation
-  skyAnimator = new KF.KeyFrameAnimator();
-  skyAnimator.init({
-    interps: [
-      {
-        keys: [0, 1],
-        values: [
-          { x: 0, y: 0 },
-          { x: 0.2, y: 0 },
-        ],
-        target: sky.material.map.offset,
-      },
-    ],
-    loop: true,
-    duration: duration * 1000,
-    easing: TWEEN.Easing.Sinusoidal.In,
-  });
-  skyAnimator.start();
-}*/
 function playCameraAnimationTitle() {
   // camera animation zoom
   cameraAnimator = new KF.KeyFrameAnimator();
@@ -672,12 +638,18 @@ function playTransitionToHelp() {
         target: manGroup.position,
       },
       {
-        keys: [0, 0.25, 0.5, 0.75, 1],
+        keys: [0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
         values: [
           { x: 0, y: 0, z: 0 },
           { x: 0.5, y: 0, z: 0 },
           { x: 0, y: 0, z: 0 },
           { x: -0.5, y: 0, z: 0 },
+          { x: 0, y: 0, z: 0 },
+          { x: 0.5, y: 0, z: 0 },
+          { x: 0, y: 0, z: 0 },
+          { x: -0.5, y: 0, z: 0 },
+          { x: 0, y: 0, z: 0 },
+          { x: 0.5, y: 0, z: 0 },
           { x: 0, y: 0, z: 0 },
         ],
         target: manGroup.rotation,
@@ -831,7 +803,7 @@ function playFishedAnimation() {
           { x: -10, y: -54, z: 0 },
           { x: -10, y: -44, z: 0 },
           { x: 0, y: 0, z: 0 },
-          { x: 0, y:0, z: 0 },
+          { x: 0, y: 0, z: 0 },
         ],
         target: fish.position,
       },
@@ -864,7 +836,7 @@ function playTransitionToTent() {
           { r: 0.5, g: 0.5, b: 0.5 },
           { r: 0, g: 0, b: 0 },
           { r: 0.5, g: 0.5, b: 0.5 },
-          { r: 1, g: 1, b: 1},
+          { r: 1, g: 1, b: 1 },
         ],
         target: ambientLight.color,
       },
@@ -1026,7 +998,6 @@ function playPlaneFlyAnimations() {
   });
   manAnimator.start();
 }
-
 function playTransitionToEnd() {
   // color animation
   lightAnimator.init({
@@ -1141,7 +1112,6 @@ async function loadObjMtl(objModelUrl, x, y, z, scaleX, scaleY, scaleZ) {
       if (child.isMesh) {
         child.castShadow = true;
         child.receiveShadow = true;
-      
       }
     });
 
